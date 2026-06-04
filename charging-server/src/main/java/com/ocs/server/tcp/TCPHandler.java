@@ -130,7 +130,7 @@ public class TCPHandler implements Runnable {
 
         ScheduledFuture<?> future = chargingScheduler.scheduleAtFixedRate(
                 task,
-                CHARGE_INTERVAL_SECONDS,   // initial delay
+                0,   // initial delay                              
                 CHARGE_INTERVAL_SECONDS,   // period
                 TimeUnit.SECONDS);
 
