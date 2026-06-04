@@ -88,13 +88,23 @@ public class TCPHandler implements Runnable {
             out.println("REJECTED_UNKNOWN_MSISDN");
             return;
         }
-
+/* 
         Customer customer = customerOpt.get();
         if (customer.getBalance().signum() <= 0) {
             System.out.println("[TCP] REJECTED – Zero balance for MSISDN=" + msisdn);
             out.println("REJECTED_INSUFFICIENT_BALANCE");
             return;
         }
+*/
+            Customer customer = customerOpt.get();
+
+            if (customer.getBalance().compareTo(new java.math.BigDecimal("1.00")) < 0) {
+                System.out.println(
+             "[TCP] REJECTED – Insufficient balance (zero) or (< 1 LE) for MSISDN=" + msisdn);
+                out.println("REJECTED_INSUFFICIENT_BALANCE");
+                 return;
+                }
+
 
         // Create session
         CallSession session = new CallSession(msisdn, clientSocket);

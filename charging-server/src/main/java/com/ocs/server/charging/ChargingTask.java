@@ -30,30 +30,51 @@ public class ChargingTask implements Runnable {
     }
 
     @Override
-    public void run() {
-        // Guard: skip if session already ended
-        if (session.isTerminated()) return;
+public void run() {
 
-        String msisdn = session.getMsisdn();
-
-        Optional<Customer> result = customerDAO.deductBalance(msisdn, CHARGE_PER_MINUTE);
-
-        if (result.isEmpty()) {
-            System.err.println("[CHARGING] Could not deduct balance for MSISDN=" + msisdn);
-            return;
-        }
-
-        Customer updated = result.get();
-        BigDecimal balance = updated.getBalance();
-
-        System.out.printf("[CHARGING] MSISDN=%s  Current Balance=%.2f%n", msisdn, balance);
-
-        // Low-balance check
-        if (balance.compareTo(BigDecimal.ZERO) <= 0) {
-            System.out.println("[CHARGING] Low balance for MSISDN=" + msisdn + " – terminating call.");
-            terminateForLowBalance(msisdn);
-        }
+    if (session.isTerminated()) {
+        return;
     }
+
+    String msisdn = session.getMsisdn();
+
+    // Read current balance before charging
+    Optional<Customer> customerOpt = customerDAO.findByMsisdn(msisdn);
+
+    if (customerOpt.isEmpty()) {
+        System.err.println("[CHARGING] Customer not found: " + msisdn);
+        terminateForLowBalance(msisdn);
+        return;
+    }
+
+    BigDecimal currentBalance = customerOpt.get().getBalance();
+
+    // Not enough balance for a new charging interval
+    if (currentBalance.compareTo(CHARGE_PER_MINUTE) < 0) {
+        System.out.println(
+                "[CHARGING] Insufficient balance for MSISDN=" + msisdn);
+
+        terminateForLowBalance(msisdn);
+        return;
+    }
+
+    // Deduct one minute charge
+    Optional<Customer> result =
+            customerDAO.deductBalance(msisdn, CHARGE_PER_MINUTE);
+
+    if (result.isEmpty()) {
+        System.err.println(
+                "[CHARGING] Could not deduct balance for MSISDN=" + msisdn);
+        return;
+    }
+
+    Customer updated = result.get();
+
+    System.out.printf(
+            "[CHARGING] MSISDN=%s Current Balance=%.2f%n",
+            msisdn,
+            updated.getBalance());
+}
 
     // ── Private helpers ──────────────────────────────────────────────────────
 
