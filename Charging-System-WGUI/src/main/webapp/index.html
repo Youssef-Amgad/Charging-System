@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Charging System Voice · Subscriber Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand__mark">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12c0-1.5 1-2 2-2M4 12c0 1.5 1 2 2 2M8 8c0-3 1.5-4.5 3-4.5M8 16c0 3 1.5 4.5 3 4.5M12 3.5c1.5 0 3 1.5 3 4.5M12 20.5c1.5 0 3-1.5 3-4.5M17 10c1 0 2 .5 2 2M17 14c1 0 2-.5 2-2" />
+          </svg>
+        </span>
+        <div class="brand__text">
+          <span class="brand__title">Charging System <b>Voice</b></span>
+          <span class="brand__subtitle">Subscriber Management Console</span>
+        </div>
+      </div>
+      <div class="topbar__status">
+        <span class="dot dot--live"></span>
+        <span>Local session · in-memory</span>
+      </div>
+    </header>
+
+    <!-- Main Grid -->
+    <main class="layout">
+      <!-- Form Card -->
+      <section class="card card--form" aria-labelledby="form-heading">
+        <div class="card__head">
+          <h2 id="form-heading">Subscriber Record</h2>
+          <span class="card__eyebrow" id="form-mode">New entry</span>
+        </div>
+
+        <form id="subscriberForm" novalidate>
+          <div class="field">
+            <label for="msisdn">MSISDN</label>
+            <input type="text" id="msisdn" name="msisdn" placeholder="e.g. 01012345678" inputmode="numeric" autocomplete="off" />
+            <span class="field__hint">10 or 11 digits, numbers only</span>
+            <span class="field__error" id="msisdnError" role="alert"></span>
+          </div>
+
+          <div class="field">
+            <label for="balance">Balance (EGP)</label>
+            <input type="text" id="balance" name="balance" placeholder="e.g. 250" inputmode="decimal" autocomplete="off" />
+            <span class="field__hint">0 – 999,999</span>
+            <span class="field__error" id="balanceError" role="alert"></span>
+          </div>
+
+          <div class="field__actions">
+            <button type="button" class="btn btn--primary" id="addBtn">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+              Add Subscriber
+            </button>
+            <button type="button" class="btn btn--accent" id="updateBtn" disabled>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.2-4.2L16.6 4.4a1.5 1.5 0 0 1 2.1 0l.9.9a1.5 1.5 0 0 1 0 2.1L8.2 18.8 4 20Z"/></svg>
+              Update
+            </button>
+            <button type="button" class="btn btn--danger" id="deleteBtn" disabled>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7m-8 0 .6 12.4A2 2 0 0 0 9.6 21h4.8a2 2 0 0 0 2-1.6L17 7"/></svg>
+              Delete
+            </button>
+            <button type="button" class="btn btn--ghost" id="clearBtn">Clear</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Table Card -->
+      <section class="card card--table" aria-labelledby="table-heading">
+        <div class="card__head card__head--row">
+          <div>
+            <h2 id="table-heading">Subscribers</h2>
+            <span class="card__eyebrow" id="countLabel">0 records</span>
+          </div>
+          <div class="search">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.2-3.2"/></svg>
+            <input type="text" id="searchInput" placeholder="Search by MSISDN…" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="sub-table">
+            <thead>
+              <tr><th>MSISDN</th><th>Balance</th><th class="col-actions">Actions</th></tr>
+            </thead>
+            <tbody id="subscriberTableBody"></tbody>
+          </table>
+
+          <div class="empty-state" id="emptyState">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M4 12c0-1.5 1-2 2-2M4 12c0 1.5 1 2 2 2M8 8c0-3 1.5-4.5 3-4.5M8 16c0 3 1.5 4.5 3 4.5M12 3.5c1.5 0 3 1.5 3 4.5M12 20.5c1.5 0 3-1.5 3-4.5M17 10c1 0 2 .5 2 2M17 14c1 0 2-.5 2-2"/></svg>
+            <p>No subscribers yet. Add the first record on the left.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Loader Overlay -->
+    <div class="loader-overlay" id="loaderOverlay">
+      <div class="loader">
+        <div class="spinner"></div>
+        <p class="loader__text">Processing...</p>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      Charging System Voice — front-end demo, data resets on reload.
+    </footer>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
