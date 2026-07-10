@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NetOps &middot; Prepaid Customer Console</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/table.css" />
+  <link rel="stylesheet" href="css/form.css" />
+  <link rel="stylesheet" href="css/modal.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+
+  <!-- Page loader -->
+  <div class="page-loader" id="pageLoader">
+    <div class="brand-mark"><span></span><span></span><span></span><span></span></div>
+    <p>Establishing connection&hellip;</p>
+  </div>
+
+  <div class="sidebar-scrim" id="sidebarScrim"></div>
+
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark"><span></span><span></span><span></span><span></span></div>
+        <div class="brand-text">
+          <div class="brand-name">NetOps Console</div>
+          <div class="brand-sub">Prepaid Charging</div>
+        </div>
+      </div>
+
+      <nav class="nav-group">
+        <div class="nav-label">Menu</div>
+        <a href="#dashboard" class="nav-item active" data-page="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+          Dashboard
+        </a>
+        <a href="#customers" class="nav-item" data-page="customers">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M23 20v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Customers
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        Connected to <strong class="mono">neondb</strong> via JDBC over TLS. Table <strong class="mono">public.customers</strong>.
+      </div>
+    </aside>
+
+    <div class="main-column">
+      <!-- Top bar -->
+      <header class="topbar">
+        <div style="display:flex; align-items:center; gap:14px;">
+          <button class="icon-btn menu-toggle" id="menuToggle" aria-label="Toggle navigation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="topbar-title">
+            <h1 id="pageTitle">Dashboard</h1>
+            <p id="pageSubtitle">Live overview of prepaid customer balances</p>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="icon-btn" id="refreshBtn" title="Refresh data">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          </button>
+          <button class="icon-btn" id="themeToggle" title="Toggle theme">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" id="themeIcon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+          </button>
+          <div class="avatar">OP</div>
+        </div>
+      </header>
+
+      <main class="content">
+
+        <!-- ================= DASHBOARD PAGE ================= -->
+        <section class="page-section active" id="page-dashboard">
+
+          <div class="stats-grid">
+            <div class="stat-card card-total">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/></svg></div>
+              <div class="stat-label">Total Customers</div>
+              <div class="stat-value mono" id="statTotal">&mdash;</div>
+            </div>
+            <div class="stat-card card-balance">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <div class="stat-label">Total Balance</div>
+              <div class="stat-value mono" id="statTotalBalance">&mdash;</div>
+            </div>
+            <div class="stat-card card-avg">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 13l4-4 3 3 5-6"/></svg></div>
+              <div class="stat-label">Average Balance</div>
+              <div class="stat-value mono" id="statAvgBalance">&mdash;</div>
+            </div>
+            <div class="stat-card card-high">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+              <div class="stat-label">Highest Balance</div>
+              <div class="stat-value mono" id="statHighBalance">&mdash;</div>
+            </div>
+            <div class="stat-card card-low">
+              <div class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/><polyline points="17 18 23 18 23 12"/></svg></div>
+              <div class="stat-label">Lowest Balance</div>
+              <div class="stat-value mono" id="statLowBalance">&mdash;</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-row">
+              <div class="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="dashSearchInput" placeholder="Search customers by MSISDN&hellip;" autocomplete="off" />
+                <button class="search-clear" id="dashSearchClear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+              </div>
+              <div class="quick-actions">
+                <button class="quick-action" id="qaAddCustomer">
+                  <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></span>
+                  Add Customer
+                </button>
+                <button class="quick-action" id="qaViewAll">
+                  <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></span>
+                  View All
+                </button>
+                <button class="quick-action" id="qaRefresh2">
+                  <span class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg></span>
+                  Refresh Stats
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="section-heading">
+              <div>
+                <h2>Recent Customers</h2>
+                <p>A live snapshot of prepaid accounts &mdash; switch to the Customers tab for full management.</p>
+              </div>
+            </div>
+            <div class="table-wrapper">
+              <table class="data-table" id="dashTable">
+                <thead>
+                  <tr>
+                    <th>MSISDN</th>
+                    <th>Balance</th>
+                  </tr>
+                </thead>
+                <tbody id="dashTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= CUSTOMERS PAGE ================= -->
+        <section class="page-section" id="page-customers">
+
+          <div class="panel">
+            <div class="panel-row">
+              <div class="search-box">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                <input type="text" id="tableSearchInput" placeholder="Live search by MSISDN&hellip;" autocomplete="off" />
+                <button class="search-clear" id="tableSearchClear"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+              </div>
+              <button class="btn btn-primary" id="openAddModalBtn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Add Customer
+              </button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="section-heading">
+              <div>
+                <h2>All Customers</h2>
+                <p id="tableSummary">Loading records&hellip;</p>
+              </div>
+            </div>
+
+            <div class="table-wrapper">
+              <table class="data-table" id="customersTable">
+                <thead>
+                  <tr>
+                    <th data-sort="msisdn">MSISDN <span class="sort-icon">&#9650;</span></th>
+                    <th data-sort="balance">Balance <span class="sort-icon">&#9650;</span></th>
+                    <th style="cursor:default;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="customersTableBody"></tbody>
+              </table>
+            </div>
+
+            <div class="pagination-bar" id="paginationBar">
+              <div class="pagination-info" id="paginationInfo"></div>
+              <div class="pagination-controls" id="paginationControls"></div>
+              <select class="page-size-select" id="pageSizeSelect">
+                <option value="5">5 / page</option>
+                <option value="10" selected>10 / page</option>
+                <option value="25">25 / page</option>
+                <option value="50">50 / page</option>
+              </select>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= ADD/EDIT CUSTOMER MODAL ================= -->
+  <div class="modal-backdrop" id="customerModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3 id="customerModalTitle">Add Customer</h3>
+          <p id="customerModalSubtitle">Create a new prepaid account</p>
+        </div>
+        <button class="modal-close" id="closeCustomerModal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="customerForm" novalidate>
+        <input type="hidden" id="formMode" value="add" />
+
+        <div class="form-group" id="msisdnGroup">
+          <label class="form-label" for="msisdnInput">MSISDN <span class="required-mark">*</span></label>
+          <div class="input-wrap">
+            <span class="input-prefix">+</span>
+            <input type="text" id="msisdnInput" class="form-input mono-field has-prefix" placeholder="201223456789" maxlength="20" />
+          </div>
+          <span class="field-hint">10&ndash;20 digits, numbers only.</span>
+          <span class="field-error" id="msisdnError"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Error text</span></span>
+        </div>
+
+        <div class="form-group" id="msisdnLockedGroup" style="display:none;">
+          <label class="form-label">MSISDN</label>
+          <div class="form-locked-field">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span id="msisdnLockedValue">&mdash;</span>
+          </div>
+          <span class="field-hint">MSISDN is the primary key and cannot be changed.</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="balanceInput">Balance (L.E.) <span class="required-mark">*</span></label>
+          <input type="text" id="balanceInput" class="form-input" placeholder="0.00" inputmode="decimal" />
+          <span class="field-hint">Positive number, up to 2 decimal places.</span>
+          <span class="field-error" id="balanceError"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Error text</span></span>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" id="cancelCustomerModal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitCustomerBtn">
+            <span id="submitBtnText">Save Customer</span>
+            <span class="spinner hidden" id="submitSpinner"></span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= DELETE CONFIRMATION MODAL ================= -->
+  <div class="modal-backdrop" id="deleteModalBackdrop">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <div class="modal-confirm-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <h3>Delete this customer?</h3>
+          <p>This action permanently removes the account and can't be undone.</p>
+        </div>
+        <button class="modal-close" id="closeDeleteModal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="modal-confirm-msisdn mono" id="deleteMsisdnDisplay">&mdash;</div>
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="cancelDeleteBtn">Keep Customer</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+          <span id="deleteBtnText">Delete Permanently</span>
+          <span class="spinner hidden" id="deleteSpinner"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="js/theme.js"></script>
+  <script src="js/validation.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

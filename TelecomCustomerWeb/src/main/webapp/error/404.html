@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>404 &middot; Signal Lost</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .error-page {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .error-code {
+      font-family: var(--font-display);
+      font-size: 88px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--c-cyan), var(--c-violet));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      line-height: 1;
+    }
+    .error-page h2 { margin-top: 12px; font-size: 20px; }
+    .error-page p { color: var(--text-muted); margin-top: 10px; max-width: 380px; }
+    .error-page a.btn {
+      margin-top: 26px;
+      display: inline-flex;
+      padding: 12px 22px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--c-cyan), var(--c-violet));
+      color: var(--c-navy-950);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .signal-icon { width: 60px; height: 60px; margin-bottom: 20px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="error-page">
+    <svg class="signal-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M2 20h.01M6 20h.01M10 20h.01M2 16a10 10 0 0 1 10-10"/>
+      <line x1="3" y1="3" x2="21" y2="21"/>
+    </svg>
+    <div class="error-code">404</div>
+    <h2>No signal on this route</h2>
+    <p>The page you're looking for doesn't exist or may have been moved. Let's get you back to the console.</p>
+    <a class="btn" href="../index.html">Return to Dashboard</a>
+  </div>
+</body>
+</html>
