@@ -4,6 +4,8 @@
  */
 package com.balancequery.model;
 
+import java.math.BigDecimal;
+
 /**
  *
  * @author mohamed
@@ -11,7 +13,7 @@ package com.balancequery.model;
 public class BalanceResponse {
 
     private String msisdn;
-    private Double balance;
+    private BigDecimal balance;
 
     public BalanceResponse() {
     }
@@ -24,11 +26,11 @@ public class BalanceResponse {
         this.msisdn = msisdn;
     }
 
-    public Double getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
 
-    public void setBalance(Double balance) {
+    public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
 }
