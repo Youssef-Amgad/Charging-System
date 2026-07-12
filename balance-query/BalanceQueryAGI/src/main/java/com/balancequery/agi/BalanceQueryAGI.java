@@ -69,7 +69,9 @@ public class BalanceQueryAGI extends BaseAgiScript {
 
             streamFile("digits/point");
 
-            exec("SayDigits", parts[1]);
+            int integerPart2 = Integer.parseInt(parts[1]);
+            exec("SayNumber", String.valueOf(integerPart2));
+            
             streamFile("custom/balance-query/piaster");
         }
     }
